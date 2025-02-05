@@ -1,4 +1,4 @@
-import NextAuth, {AuthOptions} from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions: AuthOptions = {
@@ -9,12 +9,13 @@ export const authOptions: AuthOptions = {
         }),
     ],
     callbacks: {
-        async redirect({baseUrl}) {
+        async redirect({ baseUrl }) {
             return `${baseUrl}/dashboard`;
         },
     },
 };
 
-const handler = NextAuth(authOptions);
+// Exportando como GET y POST para manejar las solicitudes HTTP correctamente
+const handler = (req, res) => NextAuth(req, res, authOptions);
 
-export { handler as GET, handler as POST};
+export { handler as GET, handler as POST };
