@@ -1,7 +1,7 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { NextAuthOptions } from "next-auth";
 
+// Configuración de autenticación
 const authOptions: NextAuthOptions = {
     providers: [
         GoogleProvider({
@@ -10,19 +10,11 @@ const authOptions: NextAuthOptions = {
         }),
     ],
     callbacks: {
-        async session({ session, token }) {
-            if (session?.user) {
-                session.user.id = token.sub; // Agregar ID del usuario a la sesión
-            }
-            return session;
-        },
         async redirect({ url, baseUrl }) {
-            return url.startsWith(baseUrl) ? url : baseUrl + "/dashboard";
+            return url.startsWith(baseUrl) ? url : `${baseUrl}/dashboard`;
         },
     },
-    pages: {
-        signIn: "/auth/signin", // Personaliza la página de inicio de sesión si la tienes
-    },
+    secret: process.env.NEXTAUTH_SECRET, // Asegura la encriptación de sesiones
 };
 
 const handler = NextAuth(authOptions);
