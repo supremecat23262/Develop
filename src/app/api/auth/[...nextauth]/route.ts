@@ -2,7 +2,6 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions } from "next-auth";
 
-// Configuración de autenticación
 const authOptions: NextAuthOptions = {
     providers: [
         GoogleProvider({
@@ -11,12 +10,20 @@ const authOptions: NextAuthOptions = {
         }),
     ],
     callbacks: {
-        async redirect({ baseUrl }) {
-            return baseUrl + "/dashboard";
+        async session({ session, token }) {
+            if (session?.user) {
+                session.user.id = token.sub; // Agregar ID del usuario a la sesión
+            }
+            return session;
         },
+        async redirect({ url, baseUrl }) {
+            return url.startsWith(baseUrl) ? url : baseUrl + "/dashboard";
+        },
+    },
+    pages: {
+        signIn: "/auth/signin", // Personaliza la página de inicio de sesión si la tienes
     },
 };
 
-// Manejo de rutas API en Next.js con App Router (Next.js 14)
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
