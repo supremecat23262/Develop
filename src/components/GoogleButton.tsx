@@ -9,6 +9,7 @@ export default function LoginButton() {
         <div>
             {session ? (
                 <div>
+                    <p>Google button</p>
                     <p>Hola, {session.user?.name}</p>
                     <button onClick={() => signOut()}>Cerrar sesión</button>
                 </div>
