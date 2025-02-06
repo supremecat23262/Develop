@@ -1,12 +1,11 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
-// Configuración de autenticación
 const authOptions: NextAuthOptions = {
     providers: [
         GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+            clientId: process.env.GOOGLE_AUTH_CLIENT_ID ?? "",
+            clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRET ?? "",
         }),
     ],
     callbacks: {
@@ -14,7 +13,7 @@ const authOptions: NextAuthOptions = {
             return url.startsWith(baseUrl) ? url : `${baseUrl}/dashboard`;
         },
     },
-    secret: process.env.NEXTAUTH_SECRET, // Asegura la encriptación de sesiones
+    secret: process.env.NEXTAUTH_SECRET, 
 };
 
 const handler = NextAuth(authOptions);
