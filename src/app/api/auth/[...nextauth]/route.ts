@@ -1,28 +1,22 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { NextApiRequest, NextApiResponse } from "next"; // Tipos correctos para las rutas API
+import { NextAuthOptions } from "next-auth";
 
-// Aquí se definen las opciones de autenticación
-export const authOptions = {
+// Configuración de autenticación
+const authOptions: NextAuthOptions = {
     providers: [
         GoogleProvider({
-            clientId: process.env.GOOGLE_AUTH_CLIENT_ID ?? "",
-            clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRET ?? "",
+            clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
         }),
     ],
     callbacks: {
-        async redirect({ baseUrl }) {
-            return `${baseUrl}/dashboard`; // Redirección después de iniciar sesión
+        async redirect({ url, baseUrl }) {
+            return baseUrl + "/dashboard";
         },
     },
 };
 
-// Handler para la ruta GET
-export const GET = (req: NextApiRequest, res: NextApiResponse) => {
-    return NextAuth(req, res, authOptions); // Pasa req y res junto con authOptions
-};
-
-// Handler para la ruta POST
-export const POST = (req: NextApiRequest, res: NextApiResponse) => {
-    return NextAuth(req, res, authOptions); // Pasa req y res junto con authOptions
-};
+// Manejo de rutas API en Next.js con App Router (Next.js 14)
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };
