@@ -2,7 +2,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import LogoutButton from "@/components/LogoutButton";
-import WaitingListManager from "@/components/components/WaitingListManager";
+import WaitingListManager from "@/components/WaitingListManager";
 import AddEmailForm from "@/components/AddEmailForm";
 
 export default async function PrivatePage() {
