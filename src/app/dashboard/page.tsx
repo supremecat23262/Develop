@@ -1,8 +1,5 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import LogoutButton from "@/components/LogoutButton";
-import WaitingListManager from "@/components/WaitingListManager";
-import AddEmailForm from "@/components/AddEmailForm";
 import Sidebar from "@/components/SideBar";
 import DashboardCards from "@/components/DashboardCards";
 import IngresosEgresosSection from "@/components/IngresoEgresos";
