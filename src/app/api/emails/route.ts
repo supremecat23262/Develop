@@ -37,13 +37,13 @@ export async function POST(req: Request) {
     await newEmail.save();
 
     return NextResponse.json({ message: "Correo agregado con éxito" });
-  } catch (error: any) {
-    console.error("❌ Error al agregar el correo:", error.message);
-
-    if (error.code === 11000) {
-      return NextResponse.json({ error: "El email ya está registrado" }, { status: 400 });
+  } catch (error) {
+    console.error("❌ Error:", error);
+  
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
+  
     return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 });
   }
 }
