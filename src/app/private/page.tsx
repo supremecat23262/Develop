@@ -1,4 +1,4 @@
-// app/private/page.tsx
+// src/pages/private/page.tsx
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import LogoutButton from "@/components/LogoutButton";
@@ -20,10 +20,10 @@ export default async function PrivatePage() {
       {/* Actualiza la última conexión */}
       <UpdateLastLogin email={session?.user?.email ?? undefined} />
 
-      {/* Sidebar fijo a la izquierda */}
+      {/* Sidebar */}
       <Sidebar />
 
-      {/* Contenido principal que ocupa el resto de la pantalla */}
+      {/* Contenido principal */}
       <div className="flex-1 p-8">
         <h1 className="text-2xl font-bold mb-4">Sección Privada</h1>
         <p className="mb-2">Email: {session?.user?.email}</p>

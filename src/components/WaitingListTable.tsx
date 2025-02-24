@@ -6,18 +6,20 @@ import WaitingListRow from "@/components/WaitingListRow";
 export interface WaitingUser {
   email: string;
   approved: boolean;
+  createdAt?: Date | string; // Fecha de registro
+  lastLogin?: Date | string; // Última conexión
 }
 
 interface WaitingListTableProps {
   users?: WaitingUser[];
   onUpdate: (email: string, approved: boolean) => void;
-  onDelete: (email: string) => void; // Recibimos la función para eliminar
+  onDelete: (email: string) => void;
 }
 
 export default function WaitingListTable({
   users = [],
   onUpdate,
-  onDelete, // Recibimos la función de eliminación
+  onDelete,
 }: WaitingListTableProps) {
   return (
     <table className="min-w-full mb-4 border">
@@ -25,6 +27,8 @@ export default function WaitingListTable({
         <tr>
           <th className="border px-4 py-2">Email</th>
           <th className="border px-4 py-2">Estado</th>
+          <th className="border px-4 py-2">Fecha de registro</th>
+          <th className="border px-4 py-2">Última conexión</th>
           <th className="border px-4 py-2">Acciones</th>
         </tr>
       </thead>
@@ -35,13 +39,15 @@ export default function WaitingListTable({
               key={user.email}
               email={user.email}
               approved={user.approved}
+              createdAt={user.createdAt}
+              lastLogin={user.lastLogin}
               onUpdate={onUpdate}
-              onDelete={onDelete} // Pasamos la función de eliminación a la fila
+              onDelete={onDelete}
             />
           ))
         ) : (
           <tr>
-            <td colSpan={3} className="text-center py-4">
+            <td colSpan={5} className="text-center py-4">
               No hay usuarios en la lista de espera.
             </td>
           </tr>

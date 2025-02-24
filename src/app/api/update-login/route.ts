@@ -1,22 +1,27 @@
+// app/api/update-login/route.ts
 import { NextResponse } from "next/server";
-import  {connectToDatabase} from "@/lib/connectToDataBase";
+import { connectToDatabase } from "@/lib/connectToDataBase";
 import AllowedEmail from "@/models/AllowedEmails";
 
 export const config = {
-  runtime: 'nodejs', // Asegura que usa Node.js y no Edge
-  maxDuration: 30,   // 30 segundos de timeout, dependiendo de tus necesidades
+  runtime: "nodejs", // Asegura que se utiliza Node.js en lugar de Edge
+  maxDuration: 30, // Timeout ajustable
 };
 
 // 📌 PATCH: Actualizar última conexión del usuario
 export async function PATCH(req: Request) {
   try {
+    // Conexión a la base de datos
     await connectToDatabase();
+
+    // Extraemos el email desde el cuerpo de la solicitud
     const { email } = await req.json();
 
     if (!email) {
       return NextResponse.json({ error: "El email es requerido" }, { status: 400 });
     }
 
+    // Buscamos al usuario y actualizamos su última conexión
     const updatedUser = await AllowedEmail.findOneAndUpdate(
       { email },
       { lastLogin: new Date() },

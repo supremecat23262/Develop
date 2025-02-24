@@ -1,4 +1,5 @@
-"use client"; // Indicamos que este archivo es un componente de cliente
+// src/components/UpdateLastLogin.tsx
+"use client";
 
 import { useEffect } from "react";
 

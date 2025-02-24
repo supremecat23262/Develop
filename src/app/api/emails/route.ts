@@ -17,7 +17,12 @@ export async function GET() {
     console.log("📌 Correos encontrados en la base de datos:", emails); // Depuración
 
     return NextResponse.json({
-      emails: emails.map(({ email, approved }) => ({ email, approved })),
+      emails: emails.map(({ email, approved, createdAt, lastLogin }) => ({ 
+        email, 
+        approved, 
+        createdAt, 
+        lastLogin 
+      })),
     });
   } catch (error) {
     console.error("❌ Error al obtener los correos:", error);
