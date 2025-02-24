@@ -3,6 +3,11 @@ import AllowedEmail from "@/models/AllowedEmails";
 import { connectToDatabase } from "@/lib/connectToDataBase";
 import { NextResponse } from "next/server"; 
 
+export const config = {
+  runtime: 'nodejs', // Asegura que usa Node.js y no Edge
+  maxDuration: 30,   // 30 segundos de timeout, dependiendo de tus necesidades
+};
+
 export async function POST(req: Request) {
   // Conectar a la base de datos
   await connectToDatabase();

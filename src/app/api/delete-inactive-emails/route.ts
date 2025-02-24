@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import  {connectToDatabase}  from "@/lib/connectToDataBase";
 import AllowedEmail from "@/models/AllowedEmails";
+
+export const config = {
+  runtime: 'nodejs', // Asegura que usa Node.js y no Edge
+  maxDuration: 30,   // 30 segundos de timeout, dependiendo de tus necesidades
+};
+
 //90 dias
 // 📌 DELETE: Eliminar correos inactivos
 export async function DELETE(req: Request) {
