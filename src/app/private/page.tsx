@@ -18,7 +18,7 @@ export default async function PrivatePage() {
   return (
     <div className="flex min-h-screen bg-white">
       {/* Actualiza la última conexión */}
-      <UpdateLastLogin email={session?.user?.email} />
+      <UpdateLastLogin email={session?.user?.email ?? undefined} />
 
       {/* Sidebar fijo a la izquierda */}
       <Sidebar />
