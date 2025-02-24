@@ -5,6 +5,8 @@ import LogoutButton from "@/components/LogoutButton";
 import WaitingListManager from "@/components/WaitingListManager";
 import AddEmailForm from "@/components/AddEmailForm";
 import Sidebar from "@/components/SideBar";
+import DeleteInactiveEmailsButton from "@/components/DeleteInactiveEmailButton";
+import UpdateLastLogin from "@/components/UpdateLastLoign"; 
 
 export default async function PrivatePage() {
   const session = await getServerSession();
@@ -15,6 +17,9 @@ export default async function PrivatePage() {
 
   return (
     <div className="flex min-h-screen bg-white">
+      {/* Actualiza la última conexión */}
+      <UpdateLastLogin email={session?.user?.email} />
+
       {/* Sidebar fijo a la izquierda */}
       <Sidebar />
 
@@ -26,6 +31,7 @@ export default async function PrivatePage() {
         <LogoutButton />
         <WaitingListManager />
         <AddEmailForm />
+        <DeleteInactiveEmailsButton />
       </div>
     </div>
   );

@@ -1,16 +1,18 @@
-// components/WaitingListRow.tsx
+// src/components/WaitingListRow.tsx
 "use client";
 
 interface WaitingListRowProps {
   email: string;
   approved: boolean;
   onUpdate: (email: string, approved: boolean) => void;
+  onDelete: (email: string) => void;
 }
 
 export default function WaitingListRow({
   email,
   approved,
   onUpdate,
+  onDelete,
 }: WaitingListRowProps) {
   return (
     <tr>
@@ -33,7 +35,14 @@ export default function WaitingListRow({
             </button>
           </>
         ) : (
-          <span className="text-sm text-gray-600">Sin acciones</span>
+          <>
+            <button
+              onClick={() => onDelete(email)} // Mostrar solo el botón de "Eliminar"
+              className="ml-2 px-3 py-1 rounded-md bg-red-700 text-white hover:bg-red-800 transition duration-200"
+            >
+              Eliminar
+            </button>
+          </>
         )}
       </td>
     </tr>

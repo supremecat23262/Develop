@@ -11,11 +11,13 @@ export interface WaitingUser {
 interface WaitingListTableProps {
   users?: WaitingUser[];
   onUpdate: (email: string, approved: boolean) => void;
+  onDelete: (email: string) => void; // Recibimos la función para eliminar
 }
 
 export default function WaitingListTable({
   users = [],
   onUpdate,
+  onDelete, // Recibimos la función de eliminación
 }: WaitingListTableProps) {
   return (
     <table className="min-w-full mb-4 border">
@@ -34,6 +36,7 @@ export default function WaitingListTable({
               email={user.email}
               approved={user.approved}
               onUpdate={onUpdate}
+              onDelete={onDelete} // Pasamos la función de eliminación a la fila
             />
           ))
         ) : (

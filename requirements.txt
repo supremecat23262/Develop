@@ -1,1 +1,2 @@
 npm install mongoose
+npm install jsonwebtoken

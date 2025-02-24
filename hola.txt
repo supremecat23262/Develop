@@ -1,0 +1,11 @@
+User {
+    referedBy: "0x00",
+    referrals: ["0x00","0x00"]
+    totalBalance: 10000
+}
+
+
+User-referrals {
+    select * from User where "0x00" 
+    referrals: ["0x00","0x00",...]
+}

@@ -1,16 +1,24 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-export const connectToDatabase = async () => {
-  if (mongoose.connections[0].readyState) {
-    return; // Si ya está conectado, no reconectar
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  throw new Error("Falta la variable de entorno MONGODB_URI");
+}
+
+const connectToDatabase = async () => {
+  if (mongoose.connection.readyState === 1) {
+    return; // Ya está conectado
   }
 
   try {
-    // Asegúrate de que tu URI esté correctamente configurada en .env
-    await mongoose.connect(process.env.MONGODB_URI!); // Conecta sin las opciones obsoletas
-    console.log("✅ Conectado a MongoDB correctamente");
+    mongoose.set("strictQuery", false);
+    await mongoose.connect(MONGODB_URI);
+    console.log("✅ Conectado a MongoDB");
   } catch (error) {
-    console.error("❌ Error al conectar a MongoDB", error);
+    console.error("❌ Error al conectar a MongoDB:", error);
     throw error;
   }
 };
+
+export { connectToDatabase };

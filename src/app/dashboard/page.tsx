@@ -5,6 +5,7 @@ import DashboardCards from "@/components/DashboardCards";
 import IngresosEgresosSection from "@/components/IngresoEgresos";
 import PotentialClients from "@/components/PotentialClients";
 
+
 export default async function PrivatePage() {
   const session = await getServerSession();
 
