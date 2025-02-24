@@ -1,15 +1,18 @@
 import mongoose from "mongoose";
 
-// Define una interfaz para el tipo de la caché de mongoose
+// Definir la interfaz para el caché
 interface MongooseCache {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
 }
 
-// Extiende el tipo global para incluir nuestra propiedad mongoose
-declare global {
-  const mongoose: MongooseCache | undefined;
+// Definir una interfaz específica para extender el objeto global
+interface CustomGlobal {
+  mongooseCache?: MongooseCache;
 }
+
+// Definir un objeto global para el caché con un tipo específico
+const globalCache = global as unknown as CustomGlobal;
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -17,13 +20,12 @@ if (!MONGODB_URI) {
   throw new Error("❌ Falta la variable de entorno MONGODB_URI");
 }
 
-// Inicializa la caché global si no existe
-if (!global.mongoose) {
-  global.mongoose = { conn: null, promise: null };
+// Inicializar el caché solo una vez
+if (!globalCache.mongooseCache) {
+  globalCache.mongooseCache = { conn: null, promise: null };
 }
 
-// Usa la caché global
-const cached = global.mongoose as MongooseCache;
+const cached = globalCache.mongooseCache;
 
 const connectToDatabase = async () => {
   if (cached.conn) return cached.conn;
