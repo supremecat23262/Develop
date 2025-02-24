@@ -1,12 +1,29 @@
 import mongoose from "mongoose";
 
+// Define una interfaz para el tipo de la caché de mongoose
+interface MongooseCache {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+}
+
+// Extiende el tipo global para incluir nuestra propiedad mongoose
+declare global {
+  const mongoose: MongooseCache | undefined;
+}
+
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
   throw new Error("❌ Falta la variable de entorno MONGODB_URI");
 }
 
-let cached = globalThis.mongoose || { conn: null, promise: null };
+// Inicializa la caché global si no existe
+if (!global.mongoose) {
+  global.mongoose = { conn: null, promise: null };
+}
+
+// Usa la caché global
+const cached = global.mongoose as MongooseCache;
 
 const connectToDatabase = async () => {
   if (cached.conn) return cached.conn;
@@ -20,6 +37,7 @@ const connectToDatabase = async () => {
       return mongoose;
     }).catch((error) => {
       console.error("❌ Error al conectar a MongoDB:", error);
+      throw error;
     });
   }
 
