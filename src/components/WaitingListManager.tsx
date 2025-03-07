@@ -1,11 +1,35 @@
-// src/components/WaitingListManager.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import WaitingListTable, { WaitingUser } from "./WaitingListTable";
+import NotificationSlider from "./NotificationSlider";
+import NotificationToggle from "./NotificationToggle";
 
 export default function WaitingListManager() {
   const [waitingUsers, setWaitingUsers] = useState<WaitingUser[]>([]);
+  const [notification, setNotification] = useState({
+    visible: false,
+    message: "",
+  });
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+
+  // Función para enviar la notificación vía API
+  const sendNotification = async (email: string, approved: boolean) => {
+    try {
+      const res = await fetch("/api/notifyEmail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, approved }),
+      });
+      if (res.ok) {
+        console.log("Notificación enviada");
+      } else {
+        console.error("Error al enviar la notificación");
+      }
+    } catch (error) {
+      console.error("Error al enviar la notificación:", error);
+    }
+  };
 
   // Función para obtener la lista de correos desde el backend
   const fetchWaitingList = async () => {
@@ -21,7 +45,6 @@ export default function WaitingListManager() {
     }
   };
 
-  // Llama al fetch cuando el componente se monta
   useEffect(() => {
     fetchWaitingList();
   }, []);
@@ -35,13 +58,18 @@ export default function WaitingListManager() {
         body: JSON.stringify({ email, approved }),
       });
 
-      const text = await res.text(); // Obtener respuesta como texto
+      const text = await res.text();
       console.log("Respuesta del servidor:", text);
 
       if (res.ok) {
-        const data = JSON.parse(text); // Parsear respuesta como JSON si es válido
-        console.log(data);
-        fetchWaitingList(); // Vuelve a cargar la lista de usuarios después de la actualización
+        if (notificationsEnabled) {
+          await sendNotification(email, approved);
+          setNotification({
+            visible: true,
+            message: `Notificación enviada a ${email}: ${approved ? "Aprobada" : "Rechazada"}`,
+          });
+        }
+        fetchWaitingList(); // Recarga la lista de usuarios
       } else {
         console.error("Error en la respuesta de la API", text);
       }
@@ -56,16 +84,21 @@ export default function WaitingListManager() {
       const res = await fetch("/api/waitingListManager", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, approved: false }), // Enviamos el estado "rechazado" para eliminar
+        body: JSON.stringify({ email, approved: false }),
       });
 
-      const text = await res.text(); // Obtener respuesta como texto
+      const text = await res.text();
       console.log("Respuesta del servidor:", text);
 
       if (res.ok) {
-        const data = JSON.parse(text); // Parsear respuesta como JSON si es válido
-        console.log(data);
-        fetchWaitingList(); // Vuelve a cargar la lista de usuarios después de la eliminación
+        if (notificationsEnabled) {
+          await sendNotification(email, false);
+          setNotification({
+            visible: true,
+            message: `Notificación de eliminación enviada a ${email}`,
+          });
+        }
+        fetchWaitingList();
       } else {
         console.error("Error al eliminar el correo", text);
       }
@@ -76,10 +109,21 @@ export default function WaitingListManager() {
 
   return (
     <div>
+      {/* Toggle para activar o desactivar notificaciones */}
+      <NotificationToggle
+        enabled={notificationsEnabled}
+        onToggle={setNotificationsEnabled}
+      />
+
       <WaitingListTable
         users={waitingUsers}
         onUpdate={handleUpdate}
-        onDelete={handleDelete} // Pasamos la función de eliminar
+        onDelete={handleDelete}
+      />
+      <NotificationSlider
+        message={notification.message}
+        visible={notification.visible}
+        onClose={() => setNotification({ visible: false, message: "" })}
       />
     </div>
   );
