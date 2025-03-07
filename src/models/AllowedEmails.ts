@@ -5,7 +5,7 @@ const AllowedEmailSchema = new mongoose.Schema({
     type: String, 
     required: true, 
     unique: true, 
-    match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ // Validación para correo electrónico
+    match: [/.+@.+\..+/, 'Por favor ingresa un correo electrónico válido'] // Expresión regular más general
   },
   createdAt: { 
     type: Date, 
@@ -19,5 +19,6 @@ const AllowedEmailSchema = new mongoose.Schema({
     default: false // Estado de aprobación (por defecto: pendiente)
   }
 });
+
 
 export default mongoose.models.AllowedEmail || mongoose.model("AllowedEmail", AllowedEmailSchema);

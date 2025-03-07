@@ -47,4 +47,12 @@ const connectToDatabase = async () => {
   return cached.conn;
 };
 
-export { connectToDatabase };
+const disconnectFromDatabase = async () => {
+  if (mongoose.connection.readyState !== 0) {
+    await mongoose.disconnect();
+    console.log("🔌 Desconectado de MongoDB");
+  }
+};
+
+export { connectToDatabase, disconnectFromDatabase };
+
