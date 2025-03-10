@@ -17,6 +17,7 @@ export async function POST(req: Request) {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      connectionTimeout: 10000, // 10 segundos de timeout
     });
 
     const subject = approved ? "Solicitud Aprobada" : "Solicitud Rechazada";

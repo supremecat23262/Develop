@@ -29,6 +29,7 @@ export async function PATCH(req: Request) {
     );
 
     if (!updatedUser) {
+      console.log(`⚠️ No se encontró el email: ${email}`);
       return NextResponse.json({ error: "El email no existe" }, { status: 404 });
     }
 

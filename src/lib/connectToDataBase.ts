@@ -34,6 +34,7 @@ const connectToDatabase = async () => {
     cached.promise = mongoose.connect(MONGODB_URI, {
       dbName: "nombre_de_tu_bd",
       bufferCommands: false,
+      connectTimeoutMS: 30000, // 30 segundos de timeout
     }).then((mongoose) => {
       console.log("✅ Conectado a MongoDB");
       return mongoose;
