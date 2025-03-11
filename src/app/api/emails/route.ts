@@ -1,27 +1,31 @@
 import { NextResponse } from "next/server";
 import  {connectToDatabase}  from "@/lib/connectToDataBase";
-import AllowedEmail  from "@/models/AllowedEmails";
+import AllowedEmail from "@/models/AllowedEmails";
 
 export const config = {
-  runtime: 'nodejs', // Asegura que usa Node.js y no Edge
-  maxDuration: 30,   // 30 segundos de timeout, dependiendo de tus necesidades
+  runtime: "nodejs",
+  maxDuration: 60, // Aumentar a 60 segundos
 };
 
 // 📌 GET: Obtener todos los correos
 export async function GET() {
   try {
+    const start = Date.now();
     await connectToDatabase();
+    console.log(`📌 Conexión establecida en ${Date.now() - start} ms`);
 
-    // Obtener todos los correos de la base de datos
-    const emails = await AllowedEmail.find({}).limit(100); // Máximo 100 registros
-    console.log("📌 Correos encontrados en la base de datos:", emails); // Depuración
+    const emails = await AllowedEmail.find({})
+      .limit(100)
+      .maxTimeMS(5000); // Límite de 5 segundos para evitar timeout
+
+    console.log(`📌 Consulta ejecutada en ${Date.now() - start} ms`);
 
     return NextResponse.json({
-      emails: emails.map(({ email, approved, createdAt, lastLogin }) => ({ 
-        email, 
-        approved, 
-        createdAt, 
-        lastLogin 
+      emails: emails.map(({ email, approved, createdAt, lastLogin }) => ({
+        email,
+        approved,
+        createdAt,
+        lastLogin,
       })),
     });
   } catch (error) {
@@ -40,7 +44,10 @@ export async function POST(req: Request) {
     const { email } = await req.json();
 
     if (!email) {
-      return NextResponse.json({ error: "El email es requerido" }, { status: 400 });
+      return NextResponse.json(
+        { error: "El email es requerido" },
+        { status: 400 }
+      );
     }
 
     const newEmail = new AllowedEmail({ email });
@@ -49,12 +56,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Correo agregado con éxito" });
   } catch (error) {
     console.error("❌ Error:", error);
-  
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-  
-    return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Error interno" },
+      { status: 500 }
+    );
   }
 }
-
