@@ -1,24 +1,46 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
-const AllowedEmailSchema = new mongoose.Schema({
-  email: { 
-    type: String, 
-    required: true, 
-    unique: true, 
-    match: [/.+@.+\..+/, 'Por favor ingresa un correo electrónico válido'] // Expresión regular más general
+// Definir la interfaz para el documento
+export interface IAllowedEmail extends Document {
+  email: string;
+  approved: boolean;
+  createdAt: Date;
+  lastLogin: Date | null;
+}
+
+// Definir el esquema con índices y validaciones
+const AllowedEmailSchema: Schema = new Schema({
+  email: {
+    type: String,
+    required: [true, "El email es requerido"],
+    unique: true,
+    lowercase: true,
+    trim: true,
+    index: true // Crear índice para optimizar búsquedas
   },
-  createdAt: { 
-    type: Date, 
-    default: Date.now // Fecha de creación por defecto
+  approved: {
+    type: Boolean,
+    default: false
   },
-  lastLogin: { 
-    type: Date // Fecha de última conexión
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    index: true // Índice para ordenar por fecha
   },
-  approved: { 
-    type: Boolean, 
-    default: false // Estado de aprobación (por defecto: pendiente)
+  lastLogin: {
+    type: Date,
+    default: null
   }
+}, {
+  timestamps: true, // Añade createdAt y updatedAt 
+  collection: 'allowedemails' // Nombre explícito de la colección
 });
 
+// Crear índice compuesto para consultas comunes
+AllowedEmailSchema.index({ approved: 1, createdAt: -1 });
 
-export default mongoose.models.AllowedEmail || mongoose.model("AllowedEmail", AllowedEmailSchema);
+// Prevenir la recreación del modelo en desarrollo (hot reload)
+const AllowedEmail = mongoose.models.AllowedEmail || 
+  mongoose.model<IAllowedEmail>("AllowedEmail", AllowedEmailSchema);
+
+export default AllowedEmail;
